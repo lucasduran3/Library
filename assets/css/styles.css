@@ -1,0 +1,229 @@
+* {
+  font-family: "Space Mono";
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+.container {
+  overflow: auto;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(177, 190, 226);
+  display: grid;
+  grid-template-rows: repeat(12, minmax(min-content, 1fr));
+  grid-template-columns: repeat(9, 1fr);
+  row-gap: 4rem;
+}
+
+header {
+  grid-row: 1/2;
+  grid-column: 1/11;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0px 2px 0 black;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  justify-items: left;
+  padding: 20px 0;
+}
+
+header h1 {
+  grid-column: 3/4;
+  font-weight: bold;
+}
+
+#addBook,
+#submit,
+#cancel,
+.true,
+.false,
+.removeButton {
+  padding: 10px;
+  border: 1px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  transition: background-color 0.2s;
+  text-align: center;
+  cursor: pointer;
+}
+
+#addBook {
+  background-color: #049bff;
+  grid-row: 2/3;
+  grid-column: 1/-1;
+  justify-self: center;
+  font-size: 1.5rem;
+  position: sticky;
+  top: 20px;
+}
+
+#addBook:hover {
+  background-color: rgb(0, 132, 219);
+}
+
+#addBook:hover,
+#submit:hover,
+#cancel:hover {
+  box-shadow: 4px 4px 0 #000;
+}
+
+#addBook:active,
+#submit:active,
+#cancel:active {
+  box-shadow: -4px -4px 0 #000;
+}
+
+dialog {
+  border: 1px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  width: clamp(250px, 20%, 350px);
+  top: 40px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+form .input-box {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+form .input-box input[type="text"],
+form input[type="number"] {
+  border: 1px solid #000;
+  outline: none;
+  box-shadow: 2px 2px 0 #000;
+  padding: 5px;
+  width: 100%;
+}
+
+form .input-box input[type="checkbox"] {
+  appearance: none;
+  position: relative;
+  width: 1em;
+  height: 1em;
+  border: 1px solid #000;
+  vertical-align: -2px;
+  color: #000;
+  font-weight: bold;
+}
+
+form .input-box input[type="checkbox"]::before {
+  content: "✓";
+  position: absolute;
+  font-size: 1.2em;
+  right: -1px;
+  top: -0.3rem;
+  visibility: hidden;
+}
+
+form .input-box input[type="checkbox"]:checked:before {
+  visibility: visible;
+}
+
+form input[type="checkbox"]:disabled {
+  border-color: #000;
+  background-color: #ddd;
+}
+
+form .input-box .error {
+  color: #f00;
+  font-size: 0.85rem;
+  position: absolute;
+  margin-top: 40px;
+  font-family: sans-serif;
+  height: min-content;
+}
+
+#submit,
+#cancel {
+  width: 100%;
+}
+
+#submit,
+.true {
+  background-color: rgb(112, 255, 124);
+}
+
+#submit:hover,
+.true:hover {
+  background-color: rgb(102, 233, 113);
+}
+
+#cancel,
+.false,
+.remove {
+  background-color: rgb(255, 85, 85);
+}
+
+#cancel:hover,
+.false:hover,
+.removeButton:hover {
+  background-color: rgb(226, 67, 67);
+}
+
+.card-container {
+  grid-column: 3/8;
+  grid-row: 3/10;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-auto-rows: minmax(150px, 250px);
+  gap: 1rem;
+}
+
+.card {
+  border: 1px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  background-color: #fff;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.titleBook {
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #000;
+  width: 100%;
+  text-align: center;
+  padding-bottom: 5px;
+}
+
+.readButton,
+.removeButton {
+  width: 100%;
+}
+
+.removeButton {
+  background-color: rgb(255, 85, 85);
+}
+
+.true {
+  background-color: rgb(112, 255, 124);
+}
+
+.false {
+  background-color: rgb(255, 141, 12);
+}
+
+.false:hover {
+  background-color: rgb(221, 119, 2);
+}
+
+@media screen and (max-width: 440px) {
+  .container {
+    justify-items: center;
+  }
+}

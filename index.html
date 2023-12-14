@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="assets/css/normalize.css" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&family=Space+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="assets/images/book-icon.svg" />
+    <title>Library</title>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Library</h1>
+      </header>
+      <dialog id="dialog">
+        <form novalidate>
+          <h2>Add new book</h2>
+          <div class="input-box">
+            <input
+              type="text"
+              id="title"
+              name="title"
+              placeholder="Title"
+              required
+            />
+            <div class="error"></div>
+          </div>
+          <div class="input-box">
+            <input
+              type="text"
+              name="author"
+              id="author"
+              placeholder="Author"
+              required
+            />
+            <div class="error"></div>
+          </div>
+          <div class="input-box">
+            <input
+              type="number"
+              name="pages"
+              id="pages"
+              placeholder="Pages"
+              min="1"
+              required
+            />
+            <div class="error"></div>
+          </div>
+          <div class="input-box">
+            <label for="read"
+              >Read: <input type="checkbox" name="read" id="read" value="read"
+            /></label>
+          </div>
+          <div class="input-box">
+            <button type="submit" id="submit">Submit</button>
+          </div>
+          <div class="input-box">
+            <button type="cancel" id="cancel">Cancel</button>
+          </div>
+        </form>
+      </dialog>
+      <button id="addBook">+ Add book</button>
+      <div class="card-container"></div>
+    </div>
+    <script src="assets/js/script.js"></script>
+  </body>
+</html>
