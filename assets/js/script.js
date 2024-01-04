@@ -1,188 +1,245 @@
-const dialog = document.getElementById("dialog");
-const addBtn = document.getElementById("addBook");
-const form = document.getElementsByTagName("form")[0];
-const titleInput = document.getElementById("title");
-const authorInput = document.getElementById("author");
-const pagesInput = document.getElementById("pages");
-const readInput = document.getElementById("read");
-const cancelBtn = document.getElementById("cancel");
-const submitBtn = document.getElementById("submit");
+class Book {
+  #title;
+  #author;
+  #pages;
+  #readed;
 
-const myLibrary = [];
-
-addBtn.addEventListener("click", function () {
-  dialog.showModal();
-});
-
-cancelBtn.addEventListener("click", function (event) {
-  event.preventDefault();
-  resetForm();
-  dialog.close();
-});
-
-//SUBMIT VALIDATION
-submitBtn.addEventListener("click", function () {
-  if (
-    titleInput.validity.valid &&
-    authorInput.validity.valid &&
-    pagesInput.validity.valid &&
-    readInput.validity.valid
-  ) {
-    const book = new Book(
-      titleInput.value,
-      authorInput.value,
-      parseInt(pagesInput.value),
-      readInput.checked
-    );
-    addBookToLibrary(book);
-    showBook();
-    resetForm();
-    dialog.close();
+  constructor(title, author, pages, readed) {
+    this.#title = title;
+    this.#author = author;
+    this.#pages = pages;
+    this.#readed = readed;
   }
-});
 
-//READ-NOTREAD BUTTON
-document.addEventListener("click", function (event) {
-  if (event.target.classList.contains("readButton")) {
-    const currentIndex = Array.from(
-      event.target.parentNode.parentNode.children
-    ).indexOf(event.target.parentNode);
-    myLibrary[currentIndex].read = !myLibrary[currentIndex].read;
+  set title(title) {
+    this.#title = title;
+  }
 
-    if (myLibrary[currentIndex].read) {
-      event.target.innerHTML = "✔ Read";
-      event.target.className = "readButton true";
-    } else {
-      event.target.innerHTML = "✘ Not read";
-      event.target.className = "readButton false";
+  get title() {
+    return this.#title;
+  }
+
+  set author(author) {
+    this.#author = author;
+  }
+
+  get author() {
+    return this.#author;
+  }
+
+  set pages(pages) {
+    this.#pages = pages;
+  }
+
+  get pages() {
+    return this.#pages;
+  }
+
+  set readed(readed) {
+    this.#readed = readed;
+  }
+
+  get readed() {
+    return this.#readed;
+  }
+}
+
+class Library {
+  #books = [];
+
+  addBook(book) {
+    this.#books.push(book);
+  }
+
+  deleteBook(index) {
+    this.#books.splice(index, 1);
+  }
+
+  get books() {
+    return this.#books;
+  }
+}
+
+class ScreenController {
+  #library;
+  #books;
+
+  #addBtn;
+  #cardContainer;
+  #titleInput;
+  #authorInput;
+  #pagesInput;
+  #readInput;
+  #submitBtn;
+  #cancelBtn;
+  #form;
+  #dialog;
+  #userInputs;
+
+  constructor() {
+    this.#library = new Library();
+    this.#books = this.#library.books;
+
+    this.#dialog = document.querySelector("dialog");
+    this.#addBtn = document.querySelector("#addBook");
+    this.#cardContainer = document.querySelector(".card-container");
+    this.#titleInput = document.querySelector("#title");
+    this.#authorInput = document.querySelector("#author");
+    this.#pagesInput = document.querySelector("#pages");
+    this.#readInput = document.querySelector("#read");
+    this.#submitBtn = document.querySelector("#submit");
+    this.#cancelBtn = document.querySelector("#cancel");
+    this.#form = document.getElementsByTagName("form")[0];
+
+    this.#userInputs = [this.#titleInput, this.#authorInput, this.#pagesInput];
+  }
+
+  init() {
+    this.setupEventListeners();
+  }
+
+  updateScreen() {
+    this.#cardContainer.innerHTML = "";
+
+    this.#books.forEach((book, bookIndex) => {
+      const bookCard = document.createElement("div");
+      bookCard.classList.add("card");
+
+      const titleBook = document.createElement("div");
+      titleBook.classList.add("titleBook");
+      titleBook.innerHTML = '"' + book.title + '"';
+      bookCard.appendChild(titleBook);
+
+      const authorBook = document.createElement("div");
+      authorBook.classList.add("authorBook");
+      authorBook.innerHTML = book.author;
+      bookCard.appendChild(authorBook);
+
+      const pagesBook = document.createElement("div");
+      pagesBook.classList.add("pagesBook");
+      pagesBook.innerHTML = book.pages + " pages";
+      bookCard.appendChild(pagesBook);
+
+      const readBook = document.createElement("button");
+      readBook.classList.add("readButton");
+
+      if (book.readed) {
+        readBook.innerHTML = "✔ Read";
+        readBook.className = "readButton true";
+        bookCard.appendChild(readBook);
+      } else {
+        readBook.innerHTML = "✘ Not read";
+        readBook.className = "readButton false";
+        bookCard.appendChild(readBook);
+      }
+
+      const removeBook = document.createElement("button");
+      removeBook.classList.add("removeButton");
+      removeBook.innerHTML = "Remove";
+
+      bookCard.appendChild(removeBook);
+
+      bookCard.dataset.index = bookIndex;
+
+      this.#cardContainer.appendChild(bookCard);
+    });
+  }
+
+  clickAddBook() {
+    const book = new Book(
+      this.#titleInput.value,
+      this.#authorInput.value,
+      this.#pagesInput.value,
+      this.#readInput.checked
+    );
+
+    this.#library.addBook(book);
+
+    this.updateScreen();
+  }
+
+  clickReadBook(e) {
+    if (e.target.classList.contains("readButton")) {
+      const selectedCard = e.target.parentNode.dataset.index;
+
+      this.#books[selectedCard].readed = !this.#books[selectedCard].readed;
+      this.updateScreen();
     }
   }
-});
 
-//REMOVE CARD
-document.addEventListener("click", function (event) {
-  if (event.target.classList.contains("removeButton")) {
-    const cardToRemove = event.target.parentNode;
-    const currentIndex = Array.from(cardToRemove.parentNode.children).indexOf(
-      cardToRemove
-    );
-
-    cardToRemove.remove();
-
-    myLibrary.splice(currentIndex, 1);
-  }
-});
-
-//INPUTS USER VALIDATION
-titleInput.addEventListener("input", function () {
-  handleInputValidation(titleInput, "*This field is required");
-});
-
-authorInput.addEventListener("input", function () {
-  handleInputValidation(authorInput, "*This field is required");
-});
-
-pagesInput.addEventListener("input", function () {
-  handleInputValidation(pagesInput, "*This field is required");
-});
-
-form.addEventListener("submit", function (event) {
-  if (!titleInput.validity.valid) {
-    showError(
-      document.querySelector("#title + .error"),
-      "*This field is Required."
-    );
-    event.preventDefault();
-  }
-  if (!authorInput.validity.valid) {
-    showError(
-      document.querySelector("#author + .error"),
-      "*This field is Required."
-    );
-    event.preventDefault();
-  }
-  if (!pagesInput.validity.valid) {
-    showError(
-      document.querySelector("#pages + .error"),
-      "*This field is Required."
-    );
-    event.preventDefault();
-  }
-});
-
-//BOOK CONSTRUCTOR
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
-}
-
-function addBookToLibrary(book) {
-  myLibrary.push(book);
-}
-
-//ADD BOOK CARD TO CONTAINER
-function showBook() {
-  const bookCard = document.createElement("div");
-  bookCard.classList.add("card");
-
-  const titleBook = document.createElement("div");
-  titleBook.classList.add("titleBook");
-  titleBook.innerHTML = '"' + myLibrary[myLibrary.length - 1].title + '"';
-  bookCard.appendChild(titleBook);
-
-  const authorBook = document.createElement("div");
-  authorBook.classList.add("authorBook");
-  authorBook.innerHTML = myLibrary[myLibrary.length - 1].author;
-  bookCard.appendChild(authorBook);
-
-  const pagesBook = document.createElement("div");
-  pagesBook.classList.add("pagesBook");
-  pagesBook.innerHTML = myLibrary[myLibrary.length - 1].pages + " pages";
-  bookCard.appendChild(pagesBook);
-
-  const readBook = document.createElement("button");
-  readBook.classList.add("readButton");
-
-  if (myLibrary[myLibrary.length - 1].read) {
-    readBook.innerHTML = "✔ Read";
-    readBook.className = "readButton true";
-    bookCard.appendChild(readBook);
-  } else {
-    readBook.innerHTML = "✘ Not read";
-    readBook.className = "readButton false";
-    bookCard.appendChild(readBook);
+  clickRemoveBook(e) {
+    if (e.target.classList.contains("removeButton")) {
+      const selectedCard = e.target.parentNode.dataset.index;
+      this.#library.deleteBook(selectedCard);
+      this.updateScreen();
+    }
   }
 
-  const removeBook = document.createElement("button");
-  removeBook.classList.add("removeButton");
-  removeBook.innerHTML = "Remove";
-  bookCard.appendChild(removeBook);
+  setupEventListeners() {
+    this.#submitBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.submitValidation(e);
+    });
 
-  const cardContainer = document.querySelector(".card-container");
-  cardContainer.appendChild(bookCard);
-}
+    this.#addBtn.addEventListener("click", () => this.#dialog.showModal());
 
-function resetForm() {
-  titleInput.value = "";
-  authorInput.value = "";
-  pagesInput.value = "";
-  readInput.checked = false;
-}
+    this.#cancelBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      this.#dialog.close();
+      this.#form.reset();
+    });
 
-function showError(current, message) {
-  current.textContent = message;
-  current.className = "error";
-}
+    document.addEventListener("click", (e) => {
+      this.clickRemoveBook(e);
+    });
 
-function handleInputValidation(inputElement, errorMessage) {
-  const errorMsj = document.querySelector(`#${inputElement.id} + .error`);
+    document.addEventListener("click", (e) => {
+      this.clickReadBook(e);
+    });
 
-  if (inputElement.validity.valid) {
-    errorMsj.innerHTML = "";
-    errorMsj.className = "error";
-  } else if (inputElement.validity.valueMissing) {
-    showError(errorMsj, errorMessage);
+    this.inputsValidation();
+  }
+
+  submitValidation(e) {
+    if (
+      this.#titleInput.validity.valid &&
+      this.#authorInput.validity.valid &&
+      this.#pagesInput.validity.valid
+    ) {
+      this.clickAddBook();
+      this.#dialog.close();
+      this.#form.reset();
+    } else {
+      this.showError();
+      e.preventDefault();
+    }
+  }
+
+  inputsValidation() {
+    this.#userInputs.forEach((element) => {
+      element.addEventListener("input", () => {
+        let errorMsj = document.querySelector(`#${element.id} + .error`);
+        if (element.validity.valid) {
+          errorMsj.innerHTML = "";
+          errorMsj.className = "error";
+        } else if (element.validity.valueMissing) {
+          errorMsj.textContent = "This field is Required.";
+          errorMsj.className = "error";
+        }
+      });
+    });
+  }
+
+  showError() {
+    this.#userInputs.forEach((element) => {
+      if (!element.validity.valid) {
+        let errorMsj = document.querySelector(`#${element.id} + .error`);
+        errorMsj.textContent = "This field is Required.";
+        errorMsj.className = "error";
+      }
+    });
   }
 }
+
+const screenController = new ScreenController();
+screenController.init();
